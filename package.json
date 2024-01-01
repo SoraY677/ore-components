@@ -5,7 +5,7 @@
   "scripts": {
     "install": "yarn --cwd assumption install",
     "dev": "yarn --cwd assumption storybook",
-    "build": "yarn --cwd assumption build"
+    "build": "yarn --cwd assumption build-storybook"
   },
   "repository": "git@github.com:SoraY677/ore-components.git",
   "author": "soray677 <soray677@outlook.com>",
