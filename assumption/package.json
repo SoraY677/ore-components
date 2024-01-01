@@ -12,8 +12,13 @@
     "build-storybook": "storybook build -o ../exhibition"
   },
   "dependencies": {
+    "@emotion/react": "^11.11.3",
+    "@emotion/styled": "^11.11.0",
+    "@mui/material": "^5.15.2",
+    "leaflet": "^1.9.4",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "react-leaflet": "^2.7.0"
   },
   "devDependencies": {
     "@storybook/addon-essentials": "^7.6.6",
@@ -24,6 +29,7 @@
     "@storybook/react": "^7.6.6",
     "@storybook/react-vite": "^7.6.6",
     "@storybook/test": "^7.6.6",
+    "@types/leaflet": "^1.9.8",
     "@types/react": "^18.2.43",
     "@types/react-dom": "^18.2.17",
     "@typescript-eslint/eslint-plugin": "^6.14.0",
@@ -36,5 +42,8 @@
     "storybook": "^7.6.6",
     "typescript": "^5.2.2",
     "vite": "^5.0.8"
+  },
+  "resolutions": {
+    "jackspeak": "2.1.1"
   }
 }
