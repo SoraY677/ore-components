@@ -5,9 +5,12 @@
   "scripts": {
     "install": "yarn --cwd assumption install",
     "dev": "yarn --cwd assumption storybook",
-    "build": "yarn --cwd assumption build-storybook"
+    "build": "yarn --cwd assumption build-storybook & node ./touch.ts ./exhibition/.nojekyll & gh-pages -d ./exhibition -t true"
   },
   "repository": "git@github.com:SoraY677/ore-components.git",
   "author": "soray677 <soray677@outlook.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "gh-pages": "^6.1.1"
+  }
 }
