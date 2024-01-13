@@ -1,8 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
-
+import "leaflet/dist/leaflet.css";
 import { nazotteSearch } from "@components/map/nazotte-search/main";
-
-import 'leaflet/dist/leaflet.css'
 
 const meta = {
   title: "map/nazotte-search",
@@ -14,22 +12,22 @@ const meta = {
 } satisfies Meta<typeof nazotteSearch>;
 
 export default meta;
-type Story = StoryObj<typeof meta>
+type Story = StoryObj<typeof meta>;
 
 export const Main: Story = {
   args: {
-    style: {
-      width: "100vw",
-      minHeight: "480px",
-    },
+    width: "640px",
+    height: "480px",
     center: {
       latitude: 35.6894,
-      longitude: 139.6917
+      longitude: 139.6917,
     },
     zoom: 13,
-    markerPositions: [{
-      latitude: 35.6894,
-      longitude: 139.6917
-    }]
-  }
-}
+    markerPositions: [
+      {
+        latitude: 35.6894,
+        longitude: 139.6917,
+      },
+    ],
+  },
+};
