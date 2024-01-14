@@ -1,6 +1,6 @@
 import type { StorybookConfig } from "@storybook/react-vite";
 const { loadConfigFromFile, mergeConfig } = require("vite");
-const path = require('path')
+const path = require("path");
 
 const config: StorybookConfig = {
   stories: ["../src/**/*.mdx", "../src/**/*.stories.@(js|jsx|mjs|ts|tsx)"],
@@ -10,7 +10,7 @@ const config: StorybookConfig = {
     "@storybook/addon-onboarding",
     "@storybook/addon-interactions",
   ],
-  viteFinal: async (config, {configType}) => {
+  viteFinal: async (config, { configType }) => {
     const { config: userConfig } = await loadConfigFromFile(
       path.resolve(__dirname, "../vite.config.ts")
     );
@@ -27,6 +27,10 @@ const config: StorybookConfig = {
   docs: {
     autodocs: "tag",
   },
-  
+  typescript: {
+    reactDocgen: "react-docgen",
+    skipBabel: true,
+    check: false,
+  },
 };
 export default config;

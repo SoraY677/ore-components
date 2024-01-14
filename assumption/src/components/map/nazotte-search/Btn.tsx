@@ -1,4 +1,3 @@
-import { FC } from "react";
 import styled from "@emotion/styled";
 
 /**
@@ -20,15 +19,17 @@ const Button = styled.button`
  */
 interface Props {
   isNazotte: boolean;
-  clickHandler: () => void;
+  onClick?: () => void;
 }
-
-export const Btn: FC<Props> = (props: Props) => {
+/**
+ * なぞって機能のスイッチングボタン
+ **/
+export const Btn = ({ isNazotte = false, onClick }: Props) => {
   return (
     <>
-      <Button onClick={props.clickHandler}>
+      <Button onClick={onClick}>
         {(() => {
-          if (props.isNazotte) {
+          if (isNazotte) {
             return <p>やめる</p>;
           } else {
             return <p>なぞる</p>;

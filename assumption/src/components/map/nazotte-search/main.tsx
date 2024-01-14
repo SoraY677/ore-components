@@ -1,4 +1,4 @@
-import { FC, useCallback, useState } from "react";
+import { FC, useState } from "react";
 // @ts-ignore
 import { Map, Marker, Polygon, Polyline, TileLayer } from "react-leaflet";
 import { Btn } from "./Btn";
@@ -26,24 +26,54 @@ const BtnLayout = styled.div`
  * props
  */
 interface Props {
+  /**
+   * 画面の横幅 (cssと同様の指定方法)
+   */
   width: string;
+  /**
+   * 画面の縦幅 (cssと同様の指定方法)
+   */
   height: string;
+  /**
+   * 地図の初期動作時に描画の中心とする座標
+   */
   center: Coordinate;
+  /**
+   * ズーム量: 10~17程度の整数指定推奨
+   */
   zoom: number;
-  markerPositions?: Coordinate[];
+  /**
+   * なぞった後の座標情報からマーカーの座標リストを算出する関数（利用者定義）
+   */
+  handler: (vertexList: Vertex[]) => Vertex[];
 }
 
+/**
+ * なぞって検索のメイン機能<br>
+ * **※自作ではない。[ISUCON10のお題を参考にコンポーネント化](https://github.com/isucon/isucon10-qualify/blob/master/webapp/frontend/src/pages/estate/nazotte/index.tsx)したため、著作権にご注意を** <br/>
+ * <br/>
+ * 以下、機能実現のために必要となる特有のライブラリ。環境に合わせてインストールすること
+ * - monotone-convex-hull-2d: https://www.npmjs.com/package/monotone-convex-hull-2d
+ * - leaflet: https://www.npmjs.com/package/leaflet
+ *
+ */
 export const nazotteSearch: FC<Props> = ({
-  width,
-  height,
-  center,
-  zoom,
-  markerPositions,
+  width = "640px",
+  height = "480px",
+  center = {
+    latitude: 35.6894,
+    longitude: 139.6917,
+  },
+  zoom = 15,
+  handler = (_) => {
+    return [];
+  },
 }) => {
   /* state */
   const [isNazotte, setIsNazotte] = useState<boolean>(false);
   const [vertexes, setVertexes] = useState<Vertex[]>([]);
   const [isDragging, setIsDragging] = useState<boolean>(false);
+  const [markerPosList, setMarkerPosList] = useState<Vertex[]>([]);
   /* function */
   const changeIsNazotte = () => {
     setIsNazotte(!isNazotte);
@@ -61,13 +91,16 @@ export const nazotteSearch: FC<Props> = ({
     if (!isNazotte) return;
     setIsNazotte(false);
     setIsDragging(false);
+    // 凸包算出
+    // - 参考:https://mathlandscape.com/convex-hull/
     const convexHullPos = convexhull([...vertexes, [latlng.lat, latlng.lng]]);
     setVertexes(convexHullPos);
     const figures = [
       ...convexHullPos.map((index: number) => vertexes[index]),
-      vertexes[convexHullPos[0]],
+      vertexes[convexHullPos[0]], // 図形として閉じるように始点の座標を終点にもする
     ].filter((vertex) => vertex);
     setVertexes(figures);
+    setMarkerPosList(handler(vertexes));
   };
 
   return (
@@ -96,8 +129,8 @@ export const nazotteSearch: FC<Props> = ({
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           opacity={isNazotte === true ? 0.5 : 1}
         />
-        {(markerPositions ?? []).map((position, i) => (
-          <Marker key={i} position={[position.latitude, position.longitude]} />
+        {markerPosList.map((pos, i) => (
+          <Marker key={i} position={[pos[0], pos[1]]} />
         ))}
         {vertexes.length > 0 &&
           (isDragging ? (
@@ -107,7 +140,7 @@ export const nazotteSearch: FC<Props> = ({
           ))}
       </Map>
       <BtnLayout>
-        <Btn isNazotte={isNazotte} clickHandler={changeIsNazotte} />
+        <Btn isNazotte={isNazotte} onClick={changeIsNazotte} />
       </BtnLayout>
     </div>
   );
