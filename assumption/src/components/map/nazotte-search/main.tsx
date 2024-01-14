@@ -1,9 +1,13 @@
-import { FC, useState, useCallback } from "react";
+import { FC, useCallback, useState } from "react";
 // @ts-ignore
-import { Map, Marker, TileLayer } from "react-leaflet";
+import { Map, Marker, Polygon, Polyline, TileLayer } from "react-leaflet";
 import { Btn } from "./Btn";
-import { Coordinate } from "./types";
+import { Coordinate, Vertex } from "./types";
 import styled from "@emotion/styled";
+import { LeafletMouseEvent } from "leaflet";
+import convexhull from "monotone-convex-hull-2d";
+
+type LeafletEventCallback = (event: LeafletMouseEvent) => void;
 
 /**
  * style
@@ -37,9 +41,32 @@ export const nazotteSearch: FC<Props> = ({
 }) => {
   /* state */
   const [isNazotte, setIsNazotte] = useState<boolean>(false);
+  const [vertexes, setVertexes] = useState<Vertex[]>([]);
+  const [isDragging, setIsDragging] = useState<boolean>(false);
   /* function */
   const changeIsNazotte = () => {
     setIsNazotte(!isNazotte);
+  };
+  const startNazotte: LeafletEventCallback = ({ latlng }) => {
+    if (!isNazotte) return;
+    setVertexes(() => [[latlng.lat, latlng.lng]]);
+    setIsDragging(true);
+  };
+  const onNazotte: LeafletEventCallback = ({ latlng }) => {
+    if (!isNazotte || !isDragging) return;
+    setVertexes([...vertexes, [latlng.lat, latlng.lng]]);
+  };
+  const stopNazotte: LeafletEventCallback = ({ latlng }) => {
+    if (!isNazotte) return;
+    setIsNazotte(false);
+    setIsDragging(false);
+    const convexHullPos = convexhull([...vertexes, [latlng.lat, latlng.lng]]);
+    setVertexes(convexHullPos);
+    const figures = [
+      ...convexHullPos.map((index: number) => vertexes[index]),
+      vertexes[convexHullPos[0]],
+    ].filter((vertex) => vertex);
+    setVertexes(figures);
   };
 
   return (
@@ -51,14 +78,25 @@ export const nazotteSearch: FC<Props> = ({
         }}
         center={[center.latitude, center.longitude]}
         zoom={zoom}
+        onmousedown={startNazotte}
+        onmousemove={onNazotte}
+        onmouseup={stopNazotte}
+        dragging={isDragging == false}
       >
         <TileLayer
           attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          opacity={isNazotte === true ? 0.5 : 1}
         />
         {(markerPositions ?? []).map((position, i) => (
           <Marker key={i} position={[position.latitude, position.longitude]} />
         ))}
+        {vertexes.length > 0 &&
+          (isDragging ? (
+            <Polyline positions={vertexes} />
+          ) : (
+            <Polygon positions={vertexes} />
+          ))}
       </Map>
       <BtnLayout>
         <Btn isNazotte={isNazotte} clickHandler={changeIsNazotte} />
