@@ -14,10 +14,11 @@ type LeafletEventCallback = (event: LeafletMouseEvent) => void;
  */
 const BtnLayout = styled.div`
   display: flex;
-  position: fixed;
+  position: absolute;
   bottom: 30px;
+  right: 30px;
   width: 100%;
-  justify-content: center;
+  justify-content: right;
   z-index: 400;
 `;
 
@@ -70,11 +71,18 @@ export const nazotteSearch: FC<Props> = ({
   };
 
   return (
-    <>
+    <div
+      style={{
+        position: "relative",
+        display: "flex",
+        width: width,
+        height: height,
+      }}
+    >
       <Map
         style={{
-          width: width,
-          height: height,
+          width: "100%",
+          height: "100%",
         }}
         center={[center.latitude, center.longitude]}
         zoom={zoom}
@@ -101,6 +109,6 @@ export const nazotteSearch: FC<Props> = ({
       <BtnLayout>
         <Btn isNazotte={isNazotte} clickHandler={changeIsNazotte} />
       </BtnLayout>
-    </>
+    </div>
   );
 };
