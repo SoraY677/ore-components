@@ -1,11 +1,25 @@
 import { FC, useState } from "react";
+// @ts-ignore
 import { Map, Marker, Polygon, Polyline, TileLayer } from "react-leaflet";
 import { Btn } from "./Btn";
 import { Coordinate, Vertex } from "./types";
 import styled from "@emotion/styled";
 import { LeafletMouseEvent } from "leaflet";
+import markerIcon2x from "./image/marker-icon-2x.png";
+import markerIcon from "./image/marker-icon.png";
+import markerShadow from "./image/marker-shadow.png";
 // @ts-ignore
 import convexhull from "monotone-convex-hull-2d";
+import("leaflet")
+  .then((Leaflet) => {
+    delete (Leaflet.Icon.Default.prototype as any)._getIconUrl;
+    Leaflet.Icon.Default.mergeOptions({
+      iconRetinaUrl: markerIcon2x,
+      iconUrl: markerIcon,
+      shadowUrl: markerShadow,
+    });
+  })
+  .catch((error) => console.error("failed to set marker icons.", error));
 
 type LeafletEventCallback = (event: LeafletMouseEvent) => void;
 
