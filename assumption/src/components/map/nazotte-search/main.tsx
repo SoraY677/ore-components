@@ -1,10 +1,10 @@
 import { FC, useState } from "react";
-// @ts-ignore
 import { Map, Marker, Polygon, Polyline, TileLayer } from "react-leaflet";
 import { Btn } from "./Btn";
 import { Coordinate, Vertex } from "./types";
 import styled from "@emotion/styled";
 import { LeafletMouseEvent } from "leaflet";
+// @ts-ignore
 import convexhull from "monotone-convex-hull-2d";
 
 type LeafletEventCallback = (event: LeafletMouseEvent) => void;
